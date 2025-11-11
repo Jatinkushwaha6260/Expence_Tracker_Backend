@@ -5,6 +5,7 @@ export const createExpence = async (req, res) => {
 try {
 const { title, amount, category, date } = req.body;
 if (!title || !amount) return res.status(400).json({ message: 'Title and amount are required' });
+ 
 
 const expence = new Expence({
 user: req.user._id,
@@ -14,7 +15,6 @@ category,
 date,
 });
 
-
 await expence.save();
 res.status(201).json(expence);
 } catch (err) {
@@ -22,27 +22,42 @@ res.status(500).json({ message: err.message });
 }
 };
 
-
 // GET — Fetch expenses (filter by category/date)
-export const getExpences = async (req, res) => {0
+export const getExpences = async (req, res) => {
 try {
-const { category, startDate, endDate } = req.query;
+const {  minAmount, maxAmount } = req.query;
 const filter = { user: req.user._id };
+  
+//category, startDate, endDate ,
 
-
+/*
 if (category) filter.category = category;
 if (startDate || endDate) filter.date = {};
 if (startDate) filter.date.$gte = new Date(startDate);
 if (endDate) filter.date.$lte = new Date(endDate);
 
+*/
 
-const expences = await Expense.find(filter).sort({ date: -1 });
-res.json(expences);
+ //  Amount filter
+    if (minAmount || maxAmount) {
+      filter.amount = {};
+      if (minAmount) filter.amount.$gte = Number(minAmount);
+      if (maxAmount) filter.amount.$lte = Number(maxAmount);
+    }
+
+//.sort({ date: -1 });
+
+//const expences = await Expence.find(filter)
+
+const expences = await Expence.find(filter).sort({ amount: 1 });
+// sort by numeric amount instead of date (ascending)
+//expences.sort((a, b) => Number(a.amount) - Number(b.amount));
+//const expences = await Expence.find()
+    res.status(200).json(expences);
 } catch (err) {
-res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message });
 }
 };
-
 
 // PUT — Edit Expense
 export const updateExpence = async (req, res) => {
@@ -50,12 +65,10 @@ try {
 const expence = await Expence.findOne({ _id: req.params.id, user: req.user._id });
 if (!expence) return res.status(404).json({ message: 'Expense not found' });
 
-
 expence.title = req.body.title || expence.title;
 expence.amount = req.body.amount || expence.amount;
 expence.category = req.body.category || expence.category;
 expence.date = req.body.date || expence.date;
-
 
 const updated = await expence.save();
 res.json(updated);
@@ -74,6 +87,452 @@ res.json({ message: 'Expense deleted successfully' });
 res.status(500).json({ message: err.message });
 }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
